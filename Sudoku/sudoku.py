@@ -116,7 +116,7 @@ class Sudoku:
             isBoxProblem = not self.boxes[box_index][indexN]
             if isColumnProblem or isRowProblem or isBoxProblem:
                 self.errorCells[coordinations] = (isColumnProblem, isRowProblem, isBoxProblem)
-            else: # todo: think if some of the datastructures shouldn't be also changed when working with error cell
+            else:
                 self.columns[j][indexN] = False
                 self.rows[i][indexN] = False
                 self.boxes[box_index][indexN] = False

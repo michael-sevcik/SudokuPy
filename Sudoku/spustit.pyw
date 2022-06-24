@@ -1,3 +1,4 @@
+# Is used to create Sudoku app
 from GUI import sudoku_GUI
 
 windowStartupWidth = 550
