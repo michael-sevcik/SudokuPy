@@ -2,16 +2,15 @@
 import tkinter
 
 # PyGame is used for GUI interface
-import pygame as pg # 
+import pygame as pg  
 from pygame.constants import KEYDOWN
-
 
 from sudoku import Sudoku
 import tkinter
 from tkinter import messagebox
 
 buttonBarRelativeHeight = 0.1
-displayingSolutionStepPeriod = 200 
+displayingSolutionStepPeriod = 200 # in miliseconds
 
 class sudoku_GUI():
     """Sudoku_GUI class provides User interface for sudoku game"""
