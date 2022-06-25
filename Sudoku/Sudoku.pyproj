@@ -4,7 +4,7 @@
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>d2893672-294e-4567-a924-bba8ff84244a</ProjectGuid>
     <ProjectHome>.</ProjectHome>
-    <StartupFile>spustit.pyw</StartupFile>
+    <StartupFile>run.pyw</StartupFile>
     <SearchPath>
     </SearchPath>
     <WorkingDirectory>.</WorkingDirectory>
@@ -24,7 +24,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="GUI.py" />
-    <Compile Include="spustit.pyw" />
+    <Compile Include="run.pyw" />
     <Compile Include="Sudoku.py" />
   </ItemGroup>
   <ItemGroup>
