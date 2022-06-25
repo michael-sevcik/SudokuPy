@@ -4,15 +4,15 @@ Simple Sudoku python game
 
 ## Starting the game
 
-To start to the game run run.pyw in Sudoku directory.
+To start the game run run.pyw in Sudoku directory.
 
 ## Game control
 
-When the game window pops up, Sudoku grid is automaticaly generated. 
+When the game window pops up, the Sudoku grid is automatically generated. 
 
 ### Picking cell
 
-To pick a cell, you want to fill in, navigate your cursor to the desired location and press left mouse button. The cell will be highlighted to signal, that it's picked.
+To pick a cell, you want to fill in, navigate your cursor to the desired location and press the left mouse button. The cell will be highlighted to signal, that it's picked.
 
 ### Writing in a cell
 
@@ -32,6 +32,6 @@ If you have filled all cells correctly, you will see a win message.
 
 If you want to see a correct solution, press the solve button.
 
-### Gerating new sudoku puzzle
+### Generating new Sudoku puzzle
 
 To generate a new content, press the restart button.
