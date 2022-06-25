@@ -18,7 +18,7 @@ To pick a cell, you want to fill in, navigate your cursor to the desired locatio
 
 Fistly, pick a desired cell, then press a number between 1-9. You can not change cells that were prefilled.
 
-### Deleting a cells content
+### Deleting a cell's content
 
 Firstly, pick a desired cell, then press 0, backspace or delete button.
 
