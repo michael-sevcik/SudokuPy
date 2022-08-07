@@ -232,7 +232,6 @@ class sudoku_GUI():
          # When Backspace or Delete button, picked element will be deleted.
         if (charCode == 8 or charCode == 127):
             self.sudoku.set_cell_as_empty((self.pickedElement[0]-1, self.pickedElement[1]-1))
-        return
 
     def FPS_hold(self):
         """ Holds the main loop as long as needed based on the set FPS """
@@ -292,6 +291,8 @@ class sudoku_GUI():
                 return False
             if self.isElementPicked and event.type == pg.KEYDOWN:
                 self.key_pressed(event)
+            if event.type == pg.KEYDOWN and event.unicode == 'q':
+                pass
         
         # displaying solution
         currentTime = pg.time.get_ticks()
