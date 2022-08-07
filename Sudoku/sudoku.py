@@ -20,11 +20,6 @@ class Sudoku:
         # Dict of cells changed by user { coordinations : True }, coordinations = (i, j)
         self.cellsChangedByUser = {}
 
-        # List of lists of bools for each column/row/box determiting if a number can be used in them
-        # e.g. if columns[1][3] == true then number 3 is not used yet in the 2nd column
-        self.columns = [[True for _ in range(9)] for _ in range(9)]
-        self.rows = [[True for _ in range(9)] for _ in range(9)]
-        self.boxes = [[True for _ in range(9)] for _ in range(9)]
         self.generate()
 
     def generate(self) -> list:
@@ -55,7 +50,7 @@ class Sudoku:
         while len(leftOutCells) < self.numberOfCellsToLeaveEmpty:
             cell = (randint(0, 8), randint(0, 8))
             if cell not in leftOutCells: 
-                self.set_cell_as_empty(cell)
+                self.grid[cell[0]][cell[1]] = 0
                 leftOutCells[cell] = True
         self.map_grid()
 
@@ -76,6 +71,11 @@ class Sudoku:
         """
         i, j = coordinations
         indexN = self.grid[i][j] - 1
+
+        # if the given cell has been aready empty, there is nothing to do.
+        if self.grid[i][j] == 0:
+            return
+
         self.grid[i][j] = 0
         
         # Removes pottential record in self.cellsChangedByUser
@@ -85,10 +85,10 @@ class Sudoku:
         # Removes pottantial errorCells records of duplicit values
         if (i, j) in self.errorCells:
             del self.errorCells[(i, j)]
-        else:
-            self.columns[j][indexN] = True
-            self.rows[i][indexN] = True
-            self.boxes[self.which_box(i, j)][indexN] = True
+
+        self.columns[j][indexN].dec()
+        self.rows[i][indexN].dec()
+        self.boxes[self.which_box(i, j)][indexN].dec()
        
     def set_cells_value(self, coordinations, value):
         """Sets value of a cell and changes auxiliary data structures accordingly
@@ -101,6 +101,11 @@ class Sudoku:
         :type value: int
         """
         i, j = coordinations
+
+        # if original value of the given cell equals the new value, there is nothing to change
+        if self.grid[i][j] == value:
+            return
+
         # if original value of the element is not 0 as empty
         if self.grid[i][j] != 0:
             self.set_cell_as_empty(coordinations)
@@ -111,15 +116,16 @@ class Sudoku:
         if value > 0:
             box_index = self.which_box(i, j)
             # Checks for duplicit values
-            isColumnProblem = not self.columns[j][indexN]
-            isRowProblem = not self.rows[i][indexN]
+            isRowProblem = not self.rows[i][indexN] # todo: check if it works
+            isColumnProblem = not self.columns[j][indexN] 
             isBoxProblem = not self.boxes[box_index][indexN]
+
             if isColumnProblem or isRowProblem or isBoxProblem:
                 self.errorCells[coordinations] = (isColumnProblem, isRowProblem, isBoxProblem)
-            else:
-                self.columns[j][indexN] = False
-                self.rows[i][indexN] = False
-                self.boxes[box_index][indexN] = False
+
+            self.columns[j][indexN].inc()
+            self.rows[i][indexN].inc()
+            self.boxes[box_index][indexN].inc()
                 
     def set_cells_value_user(self, coordinations, value):
         """Sets value of a cell, changes auxiliary data structures accordingly and register cell as changed by user
@@ -131,30 +137,35 @@ class Sudoku:
         :param value: New value of element
         :type value: int
         """
+        i, j = coordinations
+        originalValue = self.grid[i][j]
+
+        if originalValue == value: return # Nothing needs to be changed
+
         self.set_cells_value(coordinations, value)
         self.cellsChangedByUser[coordinations] = True
         
-        # Check each error cell if it is still still an error cell after some value is changed because it can make other cell valid
-        i, j = coordinations
-        originalValue = self.grid[i][j]
+        # Check each error cell if it is still still an error cell after a value is changed because it can make other cell valid
         errorCells = list(self.errorCells.keys())
 
         for errorCell in errorCells:
             errrorI, errorJ = errorCell
             if self.grid[errrorI][errorJ] == originalValue and errorCell != coordinations:
-                if i == errrorI:
+                if i == errrorI and not self.rows[i][originalValue].is_used_repeatedly():
                     problemsWithCell = self.errorCells[errorCell]
                     self.errorCells[errorCell] = (False, problemsWithCell[1], problemsWithCell[2])
-                if j == errorJ:
+
+                if j == errorJ and not self.columns[i][originalValue].is_used_repeatedly():
                     problemsWithCell = self.errorCells[errorCell]
                     self.errorCells[errorCell] = (problemsWithCell[0], False, problemsWithCell[2])
-                if self.which_box(i, j) == self.which_box(errrorI, errorJ):
+
+                if self.which_box(i, j) == self.which_box(errrorI, errorJ) and not self.boxes[i][originalValue].is_used_repeatedly():
                     problemsWithCell = self.errorCells[errorCell]
                     self.errorCells[errorCell] = (problemsWithCell[0], problemsWithCell[1], False)
+
             if self.errorCells[errorCell] == (False, False, False):
                 del self.errorCells[errorCell]
                         
- 
     def find_possible_n(self, i, j, startIndex = 0):
         """Finds first possible number to put in the given cell
         
@@ -182,12 +193,25 @@ class Sudoku:
         """Finds all empty cells that needs to be filled and puts information to auxiliary data structures - rows, columns, boxes"""
         self.cellsToSolve = []
         self.solvedCells = []
+
+        # List of lists of Counter objects for each column/row/box determiting if a number can be used in them
+        # e.g. if columns[1][3] == true then number 3 is not used yet in the 2nd column
+        self.columns = [[UsageCounter() for _ in range(9)] for _ in range(9)]
+        self.rows = [[UsageCounter() for _ in range(9)] for _ in range(9)]
+        self.boxes = [[UsageCounter() for _ in range(9)] for _ in range(9)]
+
         for i in range(9):
             for j in range(9):
                 if self.grid[i][j] != 0:
-                    self.columns[j][self.grid[i][j] - 1] = False
-                    self.rows[i][self.grid[i][j] - 1] = False
-                    self.boxes[self.which_box(i, j)][self.grid[i][j] - 1] = False
+                    if self.columns[j][self.grid[i][j] - 1] == False:
+                        pass
+                    self.columns[j][self.grid[i][j] - 1].inc()
+                    if self.rows[i][self.grid[i][j] - 1] == False:
+                        pass
+                    self.rows[i][self.grid[i][j] - 1].inc()
+                    if self.boxes[self.which_box(i, j)][self.grid[i][j] - 1] == False:
+                        pass
+                    self.boxes[self.which_box(i, j)][self.grid[i][j] - 1].inc()
                 else: self.cellsToSolve.append([i, j, 0])    #[row n, column n, starting index]
     
     def is_win(self):
@@ -216,7 +240,6 @@ class Sudoku:
                     
                 # If possible number was found
                 elif possibleN[0]: 
-                    self.grid[i][j] = possibleN[1]
                     self.cellsToSolve[len(self.solvedCells)][2] = possibleN[1] # Set startingindex to go though only not visited states
                     self.set_cells_value((i, j), possibleN[1])
                     self.solvedCells.append((i, j))
@@ -240,6 +263,28 @@ class Sudoku:
                 return 1 # some cells might be still empty     
             
         return 0 # all cells filled
+
+
+class UsageCounter:
+    count : int
+    def __init__(self):
+        self.count = 0
+    
+    def __bool__(self):
+        return self.count == 0
+
+    def inc(self):
+        self.count += 1
+
+    def dec(self):
+        self.count -= 1
+        if self.count < 0: # todo: for testing
+            pass
+
+    def is_used_repeatedly(self):
+        return self.count > 1
+
+
     
 def main():
     """Prints generated Sudoku grid """
