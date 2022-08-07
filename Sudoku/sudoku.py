@@ -266,22 +266,30 @@ class Sudoku:
 
 
 class UsageCounter:
+    """Counter, that counts, how many times something is used."""
     count : int
     def __init__(self):
         self.count = 0
     
     def __bool__(self):
+        """True for is not used"""
         return self.count == 0
 
     def inc(self):
+        """New use"""
         self.count += 1
 
     def dec(self):
+        """Increase count of uses"""
         self.count -= 1
         if self.count < 0: # todo: for testing
             pass
 
     def is_used_repeatedly(self):
+        """Provides information, if a given thing is used repeatedly
+        
+        :return: bool if count is greater then 1
+        """
         return self.count > 1
 
 
