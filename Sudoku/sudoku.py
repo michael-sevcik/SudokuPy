@@ -138,9 +138,10 @@ class Sudoku:
         :type value: int
         """
         i, j = coordinations
-        originalValue = self.grid[i][j]
 
-        if originalValue == value: return # Nothing needs to be changed
+        if self.grid[i][j] == value: return # Nothing needs to be changed
+
+        originalValueIndex = self.grid[i][j] - 1
 
         self.set_cells_value(coordinations, value)
         self.cellsChangedByUser[coordinations] = True
@@ -150,16 +151,17 @@ class Sudoku:
 
         for errorCell in errorCells:
             errrorI, errorJ = errorCell
-            if self.grid[errrorI][errorJ] == originalValue and errorCell != coordinations:
-                if i == errrorI and not self.rows[i][originalValue].is_used_repeatedly():
+            if self.grid[errrorI][errorJ] == originalValueIndex and errorCell != coordinations:
+                if i == errrorI and not self.rows[i][originalValueIndex].is_used_repeatedly():
                     problemsWithCell = self.errorCells[errorCell]
                     self.errorCells[errorCell] = (False, problemsWithCell[1], problemsWithCell[2])
 
-                if j == errorJ and not self.columns[i][originalValue].is_used_repeatedly():
+                if j == errorJ and not self.columns[j][originalValueIndex].is_used_repeatedly():
                     problemsWithCell = self.errorCells[errorCell]
                     self.errorCells[errorCell] = (problemsWithCell[0], False, problemsWithCell[2])
 
-                if self.which_box(i, j) == self.which_box(errrorI, errorJ) and not self.boxes[i][originalValue].is_used_repeatedly():
+                boxNumber = self.which_box(errrorI, errorJ)
+                if self.which_box(i, j) == self.which_box(errrorI, errorJ) and not self.boxes[boxNumber][originalValueIndex].is_used_repeatedly():
                     problemsWithCell = self.errorCells[errorCell]
                     self.errorCells[errorCell] = (problemsWithCell[0], problemsWithCell[1], False)
 
@@ -264,7 +266,6 @@ class Sudoku:
             
         return 0 # all cells filled
 
-
 class UsageCounter:
     """Counter, that counts, how many times something is used."""
     count : int
@@ -291,8 +292,6 @@ class UsageCounter:
         :return: bool if count is greater then 1
         """
         return self.count > 1
-
-
     
 def main():
     """Prints generated Sudoku grid """
