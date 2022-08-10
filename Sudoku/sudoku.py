@@ -196,7 +196,7 @@ class Sudoku:
         self.cellsToSolve = []
         self.solvedCells = []
 
-        # List of lists of Counter objects for each column/row/box determiting if a number can be used in them
+        # List of lists of UsageCounter objects for each column/row/box determiting if a number can be used in them
         # e.g. if columns[1][3] == true then number 3 is not used yet in the 2nd column
         self.columns = [[UsageCounter() for _ in range(9)] for _ in range(9)]
         self.rows = [[UsageCounter() for _ in range(9)] for _ in range(9)]
