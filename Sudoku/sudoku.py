@@ -228,8 +228,14 @@ class Sudoku:
         The method works only if cells in grid are all valid
         :return: 0 if solved, 1 when there are empty cells left in sudoku grid, 2 when solution does not exist.
         """
+        # First set any invalid cell to empty
+        if len(self.errorCells) > 0:
+            cell = self.errorCells.popitem()[0]
+            self.set_cell_as_empty(cell)
+            return 1
+            
         # Fills what needs to be filled
-        if self.cellsToSolve:
+        elif self.cellsToSolve:
             # If there are leftout cells, try to fill them
             if len(self.solvedCells) < len(self.cellsToSolve):
                 # if it is filled and not wrong, use it  

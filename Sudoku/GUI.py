@@ -262,19 +262,15 @@ class sudoku_GUI():
     def handle_solution_calculating (self):
         """Handles solution calculating and displaying"""
         # First delete all not valid cells
-        if len(self.sudoku.errorCells) > 0:
-            cell = self.sudoku.errorCells.popitem()[0]
-            self.sudoku.set_cell_as_empty(cell)
-        else:
-            # try to fill in rest
-            status = self.sudoku.solve()
-            if status == 0:
-                self.computeSolution = False
-            if status == 2:
-                tk = tkinter.Tk()
-                tk.wm_withdraw() # hides the tkinter main window
-                messagebox.showinfo("No possible solution", "OK")
-                self.computeSolution = False
+        # try to fill in rest
+        status = self.sudoku.solve()
+        if status == 0:
+            self.computeSolution = False
+        if status == 2:
+            tk = tkinter.Tk()
+            tk.wm_withdraw() # hides the tkinter main window
+            messagebox.showinfo("No possible solution", "OK")
+            self.computeSolution = False
         self.display_layout()
         pg.display.update()
             
