@@ -48,6 +48,7 @@ Firstly, all `errorCells` are emptied. Then, if there are any `cellsToSolve`, so
 
 `solve` method returns int signaling if it needs to be called again to finish solving the sudoku grid, this makes possible displaying the algorithm step by step to user.
 
+During development, I thought about a simpler solution without [auxiliary data structures](#storing-usage-count-of-given-number-in-a-certain-rowcolumnbox), but I figured it is more effective this way, and in addition, I can use the information about the count of number uses in the validity checking.
 
 ```Python 
 def solve(self):
